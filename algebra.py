@@ -47,3 +47,8 @@ print("-------------------")
 afterExpansionOne = expandOut("x","y",afterProjection,toyGraph.myGraph)
 print(afterExpansionOne)
 
+
+print("-------------------")
+
+afterExpansionTwo = expandOut("y","z",afterExpansionOne,toyGraph.myGraph)
+print(afterExpansionTwo)

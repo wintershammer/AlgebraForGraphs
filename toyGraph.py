@@ -55,8 +55,10 @@ edgeThree = Edge("directed", nodeFour, nodeOne)
 edgeFour = Edge("directed", nodeFour, nodeFive)
 edgeFive = Edge("playedIn", nodeTwo, nodeFive)
 edgeSix = Edge("playedIn", nodeSix, nodeFive)
+edgeSeven = Edge("isSimilarTo", nodeOne, nodeFive)
+edgeEight = Edge("isSimilarTo", nodeFive, nodeOne)
 
-myGraph = [[nodeOne,nodeTwo,nodeThree,nodeFour,nodeFive,nodeSix],[edgeOne,edgeTwo,edgeThree,edgeFour,edgeFive,edgeSix]]
+myGraph = [[nodeOne,nodeTwo,nodeThree,nodeFour,nodeFive,nodeSix],[edgeOne,edgeTwo,edgeThree,edgeFour,edgeFive,edgeSix,edgeSeven,edgeEight]]
 
 
 
