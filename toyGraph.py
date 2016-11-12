@@ -28,17 +28,17 @@ def findEdges(source,target,edges):
             listOfEdges.append(edge)
     return listOfEdges
 
-def findOutGoingEdges(source,edges):
+def findOutGoingEdges(source,edges): #source is the source node, edges is the list of all edges
     listOfEdges = []
     for edge in edges:
         if edge.source == source:
             listOfEdges.append(edge)
     return listOfEdges
 
-def findInGoingEdges(source,edges):
+def findInGoingEdges(target,edges):
     listOfEdges = []
     for edge in edges:
-        if edge.source == source:
+        if edge.target == target:
             listOfEdges.append(edge)
     return listOfEdges
 
@@ -55,10 +55,10 @@ edgeThree = Edge("directed", nodeFour, nodeOne)
 edgeFour = Edge("directed", nodeFour, nodeFive)
 edgeFive = Edge("playedIn", nodeTwo, nodeFive)
 edgeSix = Edge("playedIn", nodeSix, nodeFive)
-edgeSeven = Edge("isSimilarTo", nodeOne, nodeFive)
-edgeEight = Edge("isSimilarTo", nodeFive, nodeOne)
+#edgeSeven = Edge("isSimilarTo", nodeOne, nodeFive)
+#edgeEight = Edge("isSimilarTo", nodeFive, nodeOne)
 
-myGraph = [[nodeOne,nodeTwo,nodeThree,nodeFour,nodeFive,nodeSix],[edgeOne,edgeTwo,edgeThree,edgeFour,edgeFive,edgeSix,edgeSeven,edgeEight]]
+myGraph = [[nodeOne,nodeTwo,nodeThree,nodeFour,nodeFive,nodeSix],[edgeOne,edgeTwo,edgeThree,edgeFour,edgeFive,edgeSix]]
 
 
 

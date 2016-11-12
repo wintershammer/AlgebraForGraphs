@@ -12,43 +12,50 @@ def getNodes(argument,graph):
     return newRelation
 
 def expandOut(source,target,relation,graph):
-    expandedRelation = relation
-    for row in expandedRelation.getRows():
-        if source in row:
-            for edge in toyGraph.findOutGoingEdges(row[source],graph[1]):
-                xyCollumn = source + target #the middle collumn in : X| XY | Y
-                row[xyCollumn]  = edge
-                row[target] = edge.target
-                
-    return expandedRelation
-    
-
-def expandIn(source,target,relation,graph):
-    expandedRelation = toyRelation.Relation()
+    newRelation = toyRelation.Relation()
     for row in relation.getRows():
         if source in row:
-            for edge in toyGraph.findInGoingEdges(row[source],graph[1]):
+            for edge in toyGraph.findOutGoingEdges(row[source],graph[1]):
+                newRow = copy.deepcopy(row)
                 xyCollumn = source + target #the middle collumn in : X| XY | Y
-                expandedRelation.addRow({source : row[source], xyCollumn : edge, target : edge.target})
+                newRow[xyCollumn]  = edge
+                newRow[target] = edge.target
+                newRelation.addRow(newRow)
                 
-    return expandedRelation  
+    return newRelation
+    
+
+def expandIn(target,source,relation,graph):
+    newRelation = toyRelation.Relation()
+    for row in relation.getRows():
+        if target in row:
+            for edge in toyGraph.findInGoingEdges(row[target],graph[1]):
+                newRow = copy.deepcopy(row)
+                yxCollumn = source + target #the middle collumn in : X| YX | Y
+                newRow[yxCollumn]  = edge
+                newRow[source] = edge.source
+                newRelation.addRow(newRow)
+                
+    return newRelation
 
 start = getNodes("x",toyGraph.myGraph)
+print("---step 1: select all---")
 print(start)
 
 ##TODO: make project into a proper operator that takes an argument and constraints
 afterProjection = toyRelation.Relation()
 for item in start.getRows():
-    if item["x"].label == "actor":
+    if item["x"].label == "actor" and item["x"].dic["name"] == "Al Pacino":
         afterProjection.addRow(item)
 
-print("-------------------")
+print("---step 2: project Al Pacino node---")
+print(afterProjection)
+
 
 afterExpansionOne = expandOut("x","y",afterProjection,toyGraph.myGraph)
+print("---step 3: apply expandOut---")
 print(afterExpansionOne)
 
-
-print("-------------------")
-
-afterExpansionTwo = expandOut("y","z",afterExpansionOne,toyGraph.myGraph)
+afterExpansionTwo = expandIn("y","z",afterExpansionOne,toyGraph.myGraph)
+print("---step 4: apply expandIn---")
 print(afterExpansionTwo)

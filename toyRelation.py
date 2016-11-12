@@ -16,7 +16,7 @@ class Relation(object):
         for row in self.rows:
             for item in row:
                 string += item + "=" + str(row[item]) + " "
-            string += "\n"
+            string += "\n\n"
         return string
 
 
