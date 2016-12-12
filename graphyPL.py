@@ -1,6 +1,7 @@
 from parsimonious.grammar import Grammar
 from algebra import getNodes, expandIn, expandOut
-from toyGraph import myGraph
+import toyGraph
+import toyRelation
 
 class Graphy(object):
 
@@ -26,9 +27,14 @@ class Graphy(object):
         return grammar
         
     def program(self, node, children):
-        'program = select _ "|" _ fromStatement'
-        projection , _, _ , _, fromection = children
-        print("projecting",projection,"\n","from", fromection)
+        'program = select _ "|" _ fromStatement (_ "|" _ whereStatement)?'
+        specification , _, _ , _, relation, whereStatement = children
+
+        if whereStatement:
+            collumn, field, mustEqual = whereStatement[0][3]
+            relation = selection(collumn, field, mustEqual, relation)
+        #print("projecting",specification,"\n","from", relation)
+        print(projection(specification, relation))
         return children
 
     def select(self, node, children):
@@ -40,7 +46,13 @@ class Graphy(object):
         'fromStatement = "from" _ call'
         _, _, results = children
         return results
-    
+
+    def whereStatement(self, node, children):
+        'whereStatement = "where" _ stringLit "." stringLit "=" stringLit'
+        _, _, collumn, _, attribute, _, value = children
+        return (collumn,attribute,value)
+
+        
     def call(self, node, children): 
         'call = name "(" callExpr ((sep callExpr)*)? ")"'
         name, _, argument1, arguments, _= children
@@ -63,7 +75,7 @@ class Graphy(object):
         return self.env.get(node.text.strip(), -1)
     
     def stringLit(self, node, children):
-        'stringLit = ~"[a-z A-Z 0-9 ! # $ ?]*" '
+        'stringLit = ~"[a-z A-Z 0-9 ! # $ ? *]*" '
         return str(node.text)
 
     def _(self, node, children):
@@ -72,17 +84,28 @@ class Graphy(object):
 def defaultEnf(env):
     env['funcy'] = lambda x: "funcy says " + x
     env['funcyTwo'] = lambda x,y: "funcy2 says " + x + y 
-    env['getNodes'] = lambda argument: getNodes(argument,myGraph)
-    env['expandIn'] = lambda source,target,relation: expandIn(source,target,relation,myGraph)
+    env['getNodes'] = lambda argument: getNodes(argument,toyGraph.myGraph)
+    env['expandIn'] = lambda source,target,relation: expandIn(source,target,relation,toyGraph.myGraph)
     env['expandOut'] = lambda x: "funcy says " + x
     
-def projection(data, specification):
-    returner = []
-    for item in data:
-        if data.label == specification:
-            returner.append(item)
-    return returner
+def projection(attribute, data): #attribute retains a trailing whitespace, gotta fix 
+    newRelation = toyRelation.Relation()
+    attribute = attribute[:-1] #[:-1] for trailing whitespace
+    if attribute != "*":
+        for row in data.getRows():
+            #print(row[attribute])
+            newRelation.addRow({attribute : row[attribute]})
+    else:
+        newRelation = data
+    return newRelation
 
+def selection(collumn, field, mustEqual, data):
+    newRelation = toyRelation.Relation()
+    for item in data.getRows():
+        if getattr(item[collumn], field) == mustEqual:
+            newRelation.addRow(item)
+
+    return newRelation
 
 a = Graphy()
-a.eval("select kekus | from expandIn(x,y,getNodes(x))")  
+a.eval("select * | from expandIn(x,y,getNodes(x)) | where yx.label=playedIn")  
