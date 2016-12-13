@@ -1,6 +1,6 @@
 from neo4j.v1 import GraphDatabase, basic_auth
 
-driver = GraphDatabase.driver("bolt://localhost", auth=basic_auth("neo4j", "neo4j1")) #i changed the default password :P
+driver = GraphDatabase.driver("bolt://localhost", auth=basic_auth("yourAuthHere", "yourKeyHere")) #i changed the default password :P
 session = driver.session()
 
 ##session.run("MATCH (n) DETACH DELETE n")  #THIS INITIALISES/DELETES THE WHOLE DATABASE -- CAREFUL!!!
