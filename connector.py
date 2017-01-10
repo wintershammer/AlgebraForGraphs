@@ -7,7 +7,7 @@ def getNodeById(nodeList,iden):
         if node.iden == iden:
             return node
         
-driver = GraphDatabase.driver("bolt://localhost", auth=basic_auth("neo4j", "neo4j1")) #i changed the default password :P
+driver = GraphDatabase.driver("bolt://localhost", auth=basic_auth("yourAuthHere", "yourKeyHere")) #i changed the default password :P
 session = driver.session()
 
 allNodes = session.run("""
