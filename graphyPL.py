@@ -2,6 +2,7 @@ from parsimonious.grammar import Grammar
 from algebra import getNodes, expandIn, expandOut
 import toyGraph
 import toyRelation
+import connector
 
 class Graphy(object):
 
@@ -84,8 +85,8 @@ class Graphy(object):
 def defaultEnf(env):
     env['funcy'] = lambda x: "funcy says " + x
     env['funcyTwo'] = lambda x,y: "funcy2 says " + x + y 
-    env['getNodes'] = lambda argument: getNodes(argument,toyGraph.myGraph)
-    env['expandIn'] = lambda source,target,relation: expandIn(source,target,relation,toyGraph.myGraph)
+    env['getNodes'] = lambda argument: getNodes(argument,connector.myGraph)
+    env['expandIn'] = lambda source,target,relation: expandIn(source,target,relation,connector.myGraph)
     env['expandOut'] = lambda x: "funcy says " + x
     
 def projection(attribute, data): #attribute retains a trailing whitespace, gotta fix 
