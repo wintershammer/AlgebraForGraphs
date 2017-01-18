@@ -13,13 +13,11 @@ def hashJoin(table1,table2,index1,index2):
 
     newRelation = toyRelation.Relation()
 
-    print(table1)
-    print(table2)
-    
     for r in table2.getRows():
         for s in (h[r[index2].iden]):
             r.update(s)
             newRelation.addRow(r)
+            
     return newRelation       
 
     
@@ -119,7 +117,7 @@ def defaultEnf(env):
     env['funcyTwo'] = lambda x,y: "funcy2 says " + x + y 
     env['getNodes'] = lambda argument: getNodes(argument,connector.myGraph)
     env['expandIn'] = lambda source,target,relation: expandIn(source,target,relation,connector.myGraph)
-    env['expandOut'] = lambda x: "funcy says " + x
+    env['expandOut'] = lambda source,target,relation: expandOut(source,target,relation,connector.myGraph)
     
 def projection(attribute, data): #attribute retains a trailing whitespace, gotta fix 
     newRelation = toyRelation.Relation()
@@ -144,6 +142,11 @@ def selection(collumn, field, mustEqual, data):
 
 a = Graphy()
 res = a.eval(
-'''(select * | from expandIn(x,z,getNodes(x))) JOIN (select * | from getNodes(y)) ON x, y'''
+'''select * | from expandIn(x,y,getNodes(x))'''
+)
+print(res[0])
+print("--------")
+res = a.eval(
+'''select * | from expandOut(x,z,getNodes(x))'''
 )
 print(res[0])
