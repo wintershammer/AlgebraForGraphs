@@ -133,8 +133,9 @@ def projection(attribute, data): #attribute retains a trailing whitespace, gotta
 def selection(collumn, field, mustEqual, data):
     newRelation = toyRelation.Relation()
     for item in data.getRows():
-        if getattr(item[collumn], field) == mustEqual:
-            newRelation.addRow(item)
+        if(field in item[collumn].dic):
+            if (item[collumn].dic[field] == mustEqual):
+                newRelation.addRow(item)
 
     return newRelation
     
@@ -142,11 +143,20 @@ def selection(collumn, field, mustEqual, data):
 
 a = Graphy()
 res = a.eval(
-'''select * | from expandIn(x,y,getNodes(x))'''
+"select * | from expandOut(x,y,getNodes(x)) | where x.name=Robert De Niro"
 )
 print(res[0])
-print("--------")
+print("-------")
 res = a.eval(
-'''select * | from expandOut(x,z,getNodes(x))'''
+"select * | from expandOut(x,y,getNodes(x)) | where x.name=Al Pacino"
 )
 print(res[0])
+print("-------")
+res = a.eval(
+"(select * | from expandOut(x,y,getNodes(x)) | where x.name=Al Pacino)" +
+" JOIN " +
+"(select * | from expandOut(a,b,getNodes(a)) | where a.name=Robert De Niro)" +
+" ON y,b"
+)
+print(res[0])
+print("-------")
