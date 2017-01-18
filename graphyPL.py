@@ -3,7 +3,26 @@ from algebra import getNodes, expandIn, expandOut
 import toyGraph
 import toyRelation
 import connector
+from collections import defaultdict
 
+def hashJoin(table1,table2,index1,index2):
+    h = defaultdict(list)
+    # hash phase
+    for s in table1.getRows():
+        h[s[index1].iden].append(s)
+
+    newRelation = toyRelation.Relation()
+
+    print(table1)
+    print(table2)
+    
+    for r in table2.getRows():
+        for s in (h[r[index2].iden]):
+            r.update(s)
+            newRelation.addRow(r)
+    return newRelation       
+
+    
 class Graphy(object):
 
     def __init__(self, env={}):
@@ -12,7 +31,7 @@ class Graphy(object):
         
     def parse(self, source):
         grammar = self.grammarFromDocStr()
-        return Grammar(grammar)['program'].parse(source)
+        return Grammar(grammar)['query'].parse(source)
 
     def eval(self, source):
         node = self.parse(source) if isinstance(source, str) else source
@@ -26,6 +45,19 @@ class Graphy(object):
         grammar = '\n'.join(v.__doc__ for k, v in vars(self.__class__).items()
                           if '__' not in k and hasattr(v, '__doc__') and v.__doc__)
         return grammar
+
+    def query(self,node,children):
+        'query = program / joinedProgram'
+        return children
+
+        
+    def joinedProgram(self,node,children):
+        'joinedProgram = "(" program ")" _ "JOIN" _ "(" program ")" _ "ON" _ stringLit "," _ stringLit'
+        _,programOne,_,_,_,_,_,programTwo,_,_,_,_,attributeOne,_,_,attributeTwo = children
+        resultsOne = programOne
+        resultsTwo = programTwo
+        return hashJoin(resultsOne,resultsTwo,attributeOne,attributeTwo)
+
         
     def program(self, node, children):
         'program = select _ "|" _ fromStatement (_ "|" _ whereStatement)?'
@@ -35,8 +67,8 @@ class Graphy(object):
             collumn, field, mustEqual = whereStatement[0][3]
             relation = selection(collumn, field, mustEqual, relation)
         #print("projecting",specification,"\n","from", relation)
-        print(projection(specification, relation))
-        return children
+        results = projection(specification, relation)
+        return results
 
     def select(self, node, children):
         'select = "select" _ stringLit'
@@ -107,6 +139,11 @@ def selection(collumn, field, mustEqual, data):
             newRelation.addRow(item)
 
     return newRelation
+    
+    
 
 a = Graphy()
-a.eval("select * | from expandIn(x,y,getNodes(x)) | where yx.label=playedIn")  
+res = a.eval(
+'''(select * | from expandIn(x,z,getNodes(x))) JOIN (select * | from getNodes(y)) ON x, y'''
+)
+print(res[0])
